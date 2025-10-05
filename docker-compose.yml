@@ -1,0 +1,14 @@
+volumes:
+  mysql_data:
+    name: ${PROJECT_NAME}_mysql_data
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ${PROJECT_NAME}_mysql
+    ports:
+      - ${MYSQL_PORT}:3306
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql
