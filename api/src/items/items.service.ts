@@ -25,11 +25,14 @@ export class ItemsService {
     return this.itemRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateItemDto: UpdateItemDto) {
-    return `This action updates a #${id} item`;
+  async update(id: number, updateItemDto: UpdateItemDto) {
+    const item = await this.findOne(id);
+    if (!item) return
+    Object.assign(item, updateItemDto);
+    return await this.entityManager.save(item);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+  async remove(id: number) {
+    return await this.itemRepository.delete(id);
   }
 }
