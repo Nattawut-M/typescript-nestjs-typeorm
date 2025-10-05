@@ -19,11 +19,10 @@ export class ItemsService {
   }
 
   findAll() {
-    return `This action returns all items`;
+    return this.itemRepository.find();
   }
-
   findOne(id: number) {
-    return `This action returns a #${id} item`;
+    return this.itemRepository.findOne({ where: { id } });
   }
 
   update(id: number, updateItemDto: UpdateItemDto) {
