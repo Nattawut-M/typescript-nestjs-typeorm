@@ -18,6 +18,7 @@ export class Item {
   @Column({ name: 'is_public', default: true })
   isPublic: boolean;
 
+  // casecade: true will allowed to inserted, updated, and deleted the listing from item
   @OneToOne(() => Listing, (listing) => listing.item, { cascade: true })
   @JoinColumn() // use to specify the owner of the relationship
   listing: Listing;
