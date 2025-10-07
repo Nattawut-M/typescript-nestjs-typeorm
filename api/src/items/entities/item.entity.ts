@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Listing } from './listing.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 export class Item {
@@ -22,6 +24,10 @@ export class Item {
   @OneToOne(() => Listing, (listing) => listing.item, { cascade: true })
   @JoinColumn() // use to specify the owner of the relationship
   listing: Listing;
+
+  @OneToMany(() => Comment, (comment) => comment.item, { cascade: true })
+  @JoinColumn()
+  comments: Comment[];
 
   constructor(item: Partial<Item>) {
     Object.assign(this, item);

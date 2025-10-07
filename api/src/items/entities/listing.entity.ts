@@ -12,8 +12,8 @@ export class Listing {
   @Column()
   rating: number;
 
-  @OneToOne(() => Item, (item) => item.listing)
-  item: Item
+  @OneToOne(() => Item, (item) => item.listing, { onDelete: 'CASCADE' })
+  item: Item;
 
   constructor(listing: Partial<Listing>) {
     Object.assign(this, listing);

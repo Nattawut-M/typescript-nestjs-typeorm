@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
+import { CreateCommentDTO } from './dto/comment.dto';
 
 @Controller('items')
 export class ItemsController {
@@ -23,7 +33,7 @@ export class ItemsController {
     if (!item) {
       throw new NotFoundException();
     }
-    return item
+    return item;
   }
 
   @Patch(':id')
@@ -34,5 +44,14 @@ export class ItemsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.itemsService.remove(+id);
+  }
+
+  @Post(':id/comment')
+  addComment(
+    @Param('id') id: string,
+    @Body() createCommentDto: CreateCommentDTO,
+  ) {
+    console.log(createCommentDto);
+    return this.itemsService.addComment(+id, createCommentDto);
   }
 }
