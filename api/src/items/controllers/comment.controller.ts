@@ -17,7 +17,7 @@ export class CommentController {
   }
 
   @Delete(':id')
-  delete(@Param(':id') id: number) {
+  delete(@Param('id') id: number) {
     return this.service.delete(+id);
   }
 }
