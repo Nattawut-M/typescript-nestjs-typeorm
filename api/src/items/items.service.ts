@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -18,22 +18,26 @@ export class ItemsService {
   ) {}
 
   async create(createItemDto: CreateItemDto) {
-    const listing = new Listing({
-      ...createItemDto.listing,
-      rating: 0,
+    // the entity manager is used to create a transaction, if an error occurs, the transaction will be rolled back
+    await this.entityManager.transaction(async (entityManager) => {
+      this.isWordIllegal(createItemDto.name);
+      const listing = new Listing({
+        ...createItemDto.listing,
+        rating: 0,
+      });
+      const comments = createItemDto.comments.map(
+        (comment) => new Comment(comment),
+      );
+      const tags = createItemDto.tags.map((tag) => new Tag(tag));
+      const item = new Item({
+        name: createItemDto.name,
+        isPublic: createItemDto.isPublic,
+        listing,
+        comments,
+        tags,
+      });
+      return await entityManager.save(item); // usage the entity manager from callback
     });
-    const comments = createItemDto.comments.map(
-      (comment) => new Comment(comment),
-    );
-    const tags = createItemDto.tags.map((tag) => new Tag(tag));
-    const item = new Item({
-      name: createItemDto.name,
-      isPublic: createItemDto.isPublic,
-      listing,
-      comments,
-      tags,
-    });
-    return await this.entityManager.save(item);
   }
 
   findAll() {
@@ -65,5 +69,13 @@ export class ItemsService {
     item.comments.push(comment);
 
     return await this.entityManager.save(item);
+  }
+
+  private isWordIllegal(
+    word: string,
+    illegalWords: string[] = ['error', 'bad'],
+  ) {
+    if (!illegalWords.some((illegalWord) => word.includes(illegalWord))) return;
+    throw new BadRequestException('Illegal word');
   }
 }
